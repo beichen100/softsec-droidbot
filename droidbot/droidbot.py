@@ -195,5 +195,15 @@ class DroidBot(object):
             proxy.stop_worker(self.device.serial)
 
 
+
+    def mydevice_init(self):
+        self.logger.info("Start mydevice_init")
+        # adb wait 设备、安装 droidbot APP 以及enable accessibility for DroidBot app
+        self.device.set_up()
+        self.device.connect()
+        self.device.install_app(self.app)
+
+
+
 class DroidBotException(Exception):
     pass

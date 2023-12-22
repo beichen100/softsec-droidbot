@@ -114,8 +114,9 @@ class InputManager(object):
         """
         self.logger.info("start sending events, policy is %s" % self.policy_name)
 
+
         try:
-            if self.policy is not None:
+            if self.policy is  not None:
                 self.policy.start(self)
             elif self.policy_name == POLICY_NONE:
                 self.device.start_app(self.app)
