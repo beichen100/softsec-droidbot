@@ -27,6 +27,8 @@ def parse_args():
     #                          "dummy\tadd some fake contacts, SMS log, call log; \n"
     #                          "static\tset environment based on static analysis result; \n"
     #                          "<file>\tget environment policy from a json file.\n")
+
+    # policy使用场景在droidbot\input_manager.py line 123
     parser.add_argument("-policy", action="store", dest="input_policy", default=input_manager.DEFAULT_POLICY,
                         help='Policy to use for test input generation. '
                              'Default: %s.\nSupported policies:\n' % input_manager.DEFAULT_POLICY +
@@ -88,7 +90,9 @@ def parse_args():
     parser.add_argument("-ignore_ad", action="store_true", dest="ignore_ad",
                         help="Ignore Ad views by checking resource_id.")
     parser.add_argument("-replay_output", action="store", dest="replay_output",
-                        help="The droidbot output directory being replayed.")
+                        help="The droidbot output directory being replayed."),
+    parser.add_argument("-is_quite", action="store_true", dest="is_quite",
+                        help="Run quitely the app.")
     options = parser.parse_args()
     # print options
     return options
@@ -164,8 +168,10 @@ def main():
             enable_accessibility_hard=opts.enable_accessibility_hard,
             master=opts.master,
             humanoid=opts.humanoid,
+            # 使用场景在 droidbot\adapter\droidbot_app.py line 216,仅仅是判断resource_id 有没有 ad 这样的词，有就不加入候选resource名单
             ignore_ad=opts.ignore_ad,
-            replay_output=opts.replay_output)
+            replay_output=opts.replay_output,
+            is_quite=opts.is_quite)
         droidbot.start()
     return
 

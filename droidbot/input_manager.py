@@ -30,7 +30,7 @@ class InputManager(object):
     def __init__(self, device, app, policy_name, random_input,
                  event_count, event_interval,
                  script_path=None, profiling_method=None, master=None,
-                 replay_output=None):
+                 replay_output=None,is_quite=False):
         """
         manage input event sent to the target device
         :param device: instance of Device
@@ -53,6 +53,7 @@ class InputManager(object):
         self.replay_output = replay_output
 
         self.monkey = None
+        self.is_quite=is_quite
 
         if script_path is not None:
             f = open(script_path, 'r')
@@ -100,7 +101,7 @@ class InputManager(object):
             return
         self.events.append(event)
 
-        event_log = EventLog(self.device, self.app, event, self.profiling_method)
+        event_log = EventLog(self.device, self.app, event, self.profiling_method,self.is_quite)
         event_log.start()
         while True:
             time.sleep(self.event_interval)

@@ -37,7 +37,7 @@ def task_send():
             replay_output=opts.replay_output
     )
 
-def device_init():
+def device_init(droidbot):
 
     
 

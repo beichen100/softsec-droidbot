@@ -162,6 +162,7 @@ class UtgBasedInputPolicy(InputPolicy):
 
         # First try matching a state defined in the script
         if event is None and self.script is not None:
+            self.logger.warning("\nscript is here!")
             operation = self.script.get_operation_based_on_state(self.current_state)
             if operation is not None:
                 self.script_events = operation.events

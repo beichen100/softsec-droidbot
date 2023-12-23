@@ -6,6 +6,7 @@ from abc import abstractmethod
 
 from . import utils
 from .intent import Intent
+import droidbot
 
 POSSIBLE_KEYS = [
     "BACK",
@@ -165,7 +166,8 @@ class EventLog(object):
     save an event to local file system
     """
 
-    def __init__(self, device, app, event, profiling_method=None, tag=None):
+    def __init__(self, device, app, event, profiling_method=None, is_quite=False,tag=None):
+        self.is_quite=is_quite
         self.device = device
         self.app = app
         self.event = event
@@ -239,6 +241,10 @@ class EventLog(object):
         self.event_str = self.event.get_event_str(self.from_state)
         print("Action: %s" % self.event_str)
         self.device.send_event(self.event)
+        ## 添加隐私政策同意的场景
+        if '同意' in self.event_str and self.is_quite:
+            time.sleep(5)
+            raise KeyboardInterrupt
 
     def start_profiling(self):
         """

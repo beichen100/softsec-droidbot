@@ -44,7 +44,8 @@ class DroidBot(object):
                  master=None,
                  humanoid=None,
                  ignore_ad=False,
-                 replay_output=None):
+                 replay_output=None,
+                 is_quite = False):
         """
         initiate droidbot with configurations
         :return:
@@ -82,6 +83,7 @@ class DroidBot(object):
         self.replay_output = replay_output
 
         self.enabled = True
+        self.is_quite = is_quite
 
         try:
             self.device = Device(
@@ -109,7 +111,8 @@ class DroidBot(object):
                 script_path=script_path,
                 profiling_method=profiling_method,
                 master=master,
-                replay_output=replay_output)
+                replay_output=replay_output,
+                is_quite=self.is_quite)
         except Exception:
             import traceback
             traceback.print_exc()
@@ -189,20 +192,46 @@ class DroidBot(object):
         if not self.keep_app:
             self.device.uninstall_app(self.app)
         if hasattr(self.input_manager.policy, "master") and \
-           self.input_manager.policy.master:
+        self.input_manager.policy.master:
             import xmlrpc.client
             proxy = xmlrpc.client.ServerProxy(self.input_manager.policy.master)
             proxy.stop_worker(self.device.serial)
+            
 
 
-
+    # 设备初始化，包括adb连接设备、安装droidbot APP以及待测应用
     def mydevice_init(self):
         self.logger.info("Start mydevice_init")
-        # adb wait 设备、安装 droidbot APP 以及enable accessibility for DroidBot app
-        self.device.set_up()
-        self.device.connect()
-        self.device.install_app(self.app)
 
+        try:
+            # adb wait 设备、安装 droidbot APP 以及enable accessibility for DroidBot app
+            self.device.set_up()
+            self.device.connect()
+            # 安装待测应用
+            self.device.install_app(self.app)
+
+
+        except KeyboardInterrupt:
+            self.logger.info("Keyboard interrupt.")
+            pass
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            self.stop()
+            sys.exit(-1)
+
+    def task_run(self):
+          
+        try:  
+            self.input_manager.start()
+        except KeyboardInterrupt:
+            self.logger.info("Keyboard interrupt.")
+            pass
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            self.stop()
+            sys.exit(-1)
 
 
 class DroidBotException(Exception):

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages, findall
 import os
 
 setup(
-    name='droidbot',
+    name='softsecdroidbot',
     packages=find_packages(include=['droidbot', 'droidbot.adapter']),
     # this must be the same as the name above
     version='1.0.2b4',
@@ -34,7 +34,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'droidbot=start:main',
+            'softsecdroidbot=start:main',
         ],
     },
     package_data={
