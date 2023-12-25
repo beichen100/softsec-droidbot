@@ -45,7 +45,8 @@ class DroidBot(object):
                  humanoid=None,
                  ignore_ad=False,
                  replay_output=None,
-                 is_quiet = False):
+                 is_quiet = False,
+                 special_perm=None):
         """
         initiate droidbot with configurations
         :return:
@@ -84,6 +85,8 @@ class DroidBot(object):
 
         self.enabled = True
         self.is_quiet = is_quiet
+        self.special_perm = special_perm
+
 
         try:
             self.device = Device(
@@ -94,7 +97,8 @@ class DroidBot(object):
                 grant_perm=grant_perm,
                 enable_accessibility_hard=self.enable_accessibility_hard,
                 humanoid=self.humanoid,
-                ignore_ad=ignore_ad)
+                ignore_ad=ignore_ad,
+                special_perm=special_perm)
             self.app = App(app_path, output_dir=self.output_dir)
 
             self.env_manager = AppEnvManager(

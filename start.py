@@ -92,7 +92,9 @@ def parse_args():
     parser.add_argument("-replay_output", action="store", dest="replay_output",
                         help="The droidbot output directory being replayed."),
     parser.add_argument("-is_quiet", action="store_true", dest="is_quiet",
-                        help="Run quietly the app.")
+                        help="Run quietly the App.")
+    parser.add_argument("-special_perm", action="store", dest="special_perm",
+                        help="Grant the special permmision to the App, and APP has not other permmision.")
     options = parser.parse_args()
     # print options
     return options
@@ -171,7 +173,8 @@ def main():
             # 使用场景在 droidbot\adapter\droidbot_app.py line 216,仅仅是判断resource_id 有没有 ad 这样的词，有就不加入候选resource名单
             ignore_ad=opts.ignore_ad,
             replay_output=opts.replay_output,
-            is_quiet=opts.is_quiet)
+            is_quiet=opts.is_quiet,
+            special_perm=opts.special_perm )
         droidbot.start()
     return
 

@@ -23,11 +23,18 @@ def first_install(config):
     app_path = config['app_path']
 
     global droidbot_process
-
+    
     try:
-        droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-ploicy 'none'"], stdout=subprocess.PIPE)
+        if config["special_perm"]:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-special_perm",config["special_perm"],"-policy","none"], stdout=subprocess.PIPE)
+        else:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-policy","none"], stdout=subprocess.PIPE)
 
         logger.info("Softsec-droidbot started in first_start mode.")
+
+        sleep(50)
+        stop_droidbot()
+        
         droidbot_process.wait()  # 等待子进程结束
 
     except subprocess.CalledProcessError as e:
@@ -44,8 +51,13 @@ def first_install(config):
 def quiet(config):
     app_path = config['app_path']
     global droidbot_process
+ 
     try:
-        droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+        if config["special_perm"]:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-special_perm",config["special_perm"],"-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+        else:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+
         logger.info("softsecdroidbot started in quiet mode.")
 
         sleep(100)
@@ -82,12 +94,13 @@ def stop_droidbot():
 
 
 
-## config 包含：APK路径，mode模式
+## config 包含：APK路径，mode模式(quiet,first_install)
 
 def main():
     config = {
         "app_path":r"C:/Users/Administrator/Desktop/YogaNow_1.4.10.apk",
-        "mode":"quiet"
+        "mode":"first_install",
+        "special_perm":"android.permission.CAMERA"
     }
     
     droidbot_process =None

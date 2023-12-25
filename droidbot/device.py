@@ -27,7 +27,7 @@ class Device(object):
 
     def __init__(self, device_serial=None, is_emulator=False, output_dir=None,
                  cv_mode=False, grant_perm=False, telnet_auth_token=None,
-                 enable_accessibility_hard=False, humanoid=None, ignore_ad=False):
+                 enable_accessibility_hard=False, humanoid=None, ignore_ad=False,special_perm=None):
         """
         initialize a device connection
         :param device_serial: serial number of target device
@@ -56,6 +56,7 @@ class Device(object):
         self.enable_accessibility_hard = enable_accessibility_hard
         self.humanoid = humanoid
         self.ignore_ad = ignore_ad
+        self.special_perm = special_perm
 
         # basic device information
         self.settings = {}
@@ -635,6 +636,14 @@ class Device(object):
             if not self.connected:
                 install_p.terminate()
                 return
+
+        if self.special_perm:
+            try:
+                grant_permmison_cmd = subprocess.Popen(["adb","-s",self.serial,"shell","pm","grant",package_name,self.special_perm], stdout=subprocess.PIPE)
+                self.logger.info(f"Give the special permmission:{self.special_perm} to APP successfully. ")
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Error granting the special permission to APP: {e}")
+
 
         dumpsys_p = subprocess.Popen(["adb", "-s", self.serial, "shell",
                                       "dumpsys", "package", package_name], stdout=subprocess.PIPE)
