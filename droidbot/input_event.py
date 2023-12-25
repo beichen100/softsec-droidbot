@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import random
 import time
@@ -166,8 +167,8 @@ class EventLog(object):
     save an event to local file system
     """
 
-    def __init__(self, device, app, event, profiling_method=None, is_quite=False,tag=None):
-        self.is_quite=is_quite
+    def __init__(self, device, app, event, profiling_method=None, is_quiet=False,tag=None):
+        self.is_quiet=is_quiet
         self.device = device
         self.app = app
         self.event = event
@@ -190,6 +191,11 @@ class EventLog(object):
            str(profiling_method) != "full" and \
            self.device.get_sdk_version() >= 21:
             self.sampling = int(profiling_method)
+
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger('DroidBot')
+
+
 
     def to_dict(self):
         return {
@@ -239,12 +245,17 @@ class EventLog(object):
         self.from_state = self.device.get_current_state()
         self.start_profiling()
         self.event_str = self.event.get_event_str(self.from_state)
-        print("Action: %s" % self.event_str)
+        self.logger.info("Action: %s" % self.event_str)
         self.device.send_event(self.event)
         ## 添加隐私政策同意的场景
-        if '同意' in self.event_str and self.is_quite:
-            time.sleep(5)
-            raise KeyboardInterrupt
+        if '同意' in self.event_str and self.is_quiet:
+            
+            self.logger.info(f"找到了一处隐私政策同意的地方---{self.event_str}")
+            # raise KeyboardInterrupt
+            while(True):
+                time.sleep(1)
+            
+            
 
     def start_profiling(self):
         """

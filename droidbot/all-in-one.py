@@ -1,45 +1,111 @@
 import argparse
+import json
+import logging
+import signal
+import subprocess
+import os
+import argparse
+from time import sleep
 
-from start import parse_args
-from . import input_manager
-from . import input_policy
-from . import env_manager
-from .droidbot import DroidBot
-from .droidmaster import DroidMaster
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)    
 
 
-def task_send():
-    opts = parse_args()
 
-    droidbot = DroidBot(
-            app_path=opts.apk_path,
-            device_serial=opts.device_serial,
-            is_emulator=opts.is_emulator,
-            output_dir=opts.output_dir,
-            # env_policy=opts.env_policy,
-            env_policy=env_manager.POLICY_NONE,
-            policy_name=opts.input_policy,
-            random_input=opts.random_input,
-            script_path=opts.script_path,
-            event_interval=opts.interval,
-            timeout=opts.timeout,
-            event_count=opts.count,
-            cv_mode=opts.cv_mode,
-            debug_mode=opts.debug_mode,
-            keep_app=opts.keep_app,
-            keep_env=opts.keep_env,
-            profiling_method=opts.profiling_method,
-            grant_perm=opts.grant_perm,
-            enable_accessibility_hard=opts.enable_accessibility_hard,
-            master=opts.master,
-            humanoid=opts.humanoid,
-            ignore_ad=opts.ignore_ad,
-            replay_output=opts.replay_output
-    )
 
-def device_init(droidbot):
+
+
+
+
+def first_install(config):
+    
+    app_path = config['app_path']
+
+    global droidbot_process
+
+    try:
+        droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-ploicy 'none'"], stdout=subprocess.PIPE)
+
+        logger.info("Softsec-droidbot started in first_start mode.")
+        droidbot_process.wait()  # 等待子进程结束
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error during first install mode: {e}")
+    except KeyboardInterrupt:
+        logger.info("Ctrl+C detected. Stopping DroidBot.")
+        droidbot_process.terminate()  # 终止子进程
+        droidbot_process.wait()  # 等待子进程结束
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
 
     
 
-    droidbot.logger.info("Starting init device")
-    droidbot.device.set_up()
+def quiet(config):
+    app_path = config['app_path']
+    global droidbot_process
+    try:
+        droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+        logger.info("softsecdroidbot started in quiet mode.")
+
+        sleep(100)
+        stop_droidbot()
+
+        
+        droidbot_process.wait()  # 等待子进程结束
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error starting DroidBot in quiet mode: {e}")
+    except KeyboardInterrupt:
+        logger.info("Ctrl+C detected. Stopping DroidBot.")
+        droidbot_process.terminate()  # 终止子进程
+        droidbot_process.wait()  # 等待子进程结束
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+
+
+def stop_droidbot():
+    global droidbot_process
+
+    if droidbot_process is not None:
+        try:
+            logger.info("DroidBot is ready to stop.")
+            droidbot_process.send_signal(signal.CTRL_C_EVENT)  # 向子进程发送 Ctrl+C 信号
+            droidbot_process.wait()  # 等待子进程结束
+            logger.info("DroidBot stop finished.")
+
+        except Exception as e:
+            return f"Error terminating DroidBot: {e}"
+    else:
+        return "DroidBot process not found."
+
+
+
+
+## config 包含：APK路径，mode模式
+
+def main():
+    config = {
+        "app_path":r"C:/Users/Administrator/Desktop/YogaNow_1.4.10.apk",
+        "mode":"quiet"
+    }
+    
+    droidbot_process =None
+
+
+
+
+    if config['mode'] == 'first_install':
+        first_install(config)
+    elif config['mode'] == 'quiet':
+        quiet(config)
+
+
+
+
+
+    
+
+if __name__ == '__main__':
+    main()
+    

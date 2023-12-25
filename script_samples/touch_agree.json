@@ -1,0 +1,24 @@
+{
+  "views": {
+    "agree_button": {
+      "text": "^同意",
+      "class": ".*TextView"
+    }
+  },
+  "states": {
+    "agree_state": {
+      "views": ["agree_button"]
+    }
+  },
+  "operations": {
+    "agree_operation": [
+      {
+        "event_type": "touch",
+        "target_view": "agree_button"
+      }
+    ]
+  },
+  "main": {
+    "agree_state": ["agree_operation"]
+  }
+}

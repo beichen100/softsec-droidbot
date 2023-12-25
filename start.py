@@ -91,8 +91,8 @@ def parse_args():
                         help="Ignore Ad views by checking resource_id.")
     parser.add_argument("-replay_output", action="store", dest="replay_output",
                         help="The droidbot output directory being replayed."),
-    parser.add_argument("-is_quite", action="store_true", dest="is_quite",
-                        help="Run quitely the app.")
+    parser.add_argument("-is_quiet", action="store_true", dest="is_quiet",
+                        help="Run quietly the app.")
     options = parser.parse_args()
     # print options
     return options
@@ -171,7 +171,7 @@ def main():
             # 使用场景在 droidbot\adapter\droidbot_app.py line 216,仅仅是判断resource_id 有没有 ad 这样的词，有就不加入候选resource名单
             ignore_ad=opts.ignore_ad,
             replay_output=opts.replay_output,
-            is_quite=opts.is_quite)
+            is_quiet=opts.is_quiet)
         droidbot.start()
     return
 

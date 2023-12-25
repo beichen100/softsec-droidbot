@@ -45,7 +45,7 @@ class DroidBot(object):
                  humanoid=None,
                  ignore_ad=False,
                  replay_output=None,
-                 is_quite = False):
+                 is_quiet = False):
         """
         initiate droidbot with configurations
         :return:
@@ -83,7 +83,7 @@ class DroidBot(object):
         self.replay_output = replay_output
 
         self.enabled = True
-        self.is_quite = is_quite
+        self.is_quiet = is_quiet
 
         try:
             self.device = Device(
@@ -112,7 +112,7 @@ class DroidBot(object):
                 profiling_method=profiling_method,
                 master=master,
                 replay_output=replay_output,
-                is_quite=self.is_quite)
+                is_quiet=self.is_quiet)
         except Exception:
             import traceback
             traceback.print_exc()

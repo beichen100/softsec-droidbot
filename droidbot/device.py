@@ -656,6 +656,9 @@ class Device(object):
         self.logger.info("App installed: %s" % package_name)
         self.logger.info("Main activity: %s" % app.get_main_activity())
 
+        # grant_permission_cmd = ["adb", "shell pm grant", app.get_package_name(), "android.permission.WRITE_EXTERNAL_STORAGE"]
+        
+
     @staticmethod
     def __parse_main_activity_from_dumpsys_lines(lines):
         main_activity = None

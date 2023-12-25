@@ -30,7 +30,7 @@ class InputManager(object):
     def __init__(self, device, app, policy_name, random_input,
                  event_count, event_interval,
                  script_path=None, profiling_method=None, master=None,
-                 replay_output=None,is_quite=False):
+                 replay_output=None,is_quiet=False):
         """
         manage input event sent to the target device
         :param device: instance of Device
@@ -53,10 +53,10 @@ class InputManager(object):
         self.replay_output = replay_output
 
         self.monkey = None
-        self.is_quite=is_quite
+        self.is_quiet=is_quiet
 
         if script_path is not None:
-            f = open(script_path, 'r')
+            f = open(script_path, 'r',encoding='utf-8')
             script_dict = json.load(f)
             from .input_script import DroidBotScript
             self.script = DroidBotScript(script_dict)
@@ -101,7 +101,7 @@ class InputManager(object):
             return
         self.events.append(event)
 
-        event_log = EventLog(self.device, self.app, event, self.profiling_method,self.is_quite)
+        event_log = EventLog(self.device, self.app, event, self.profiling_method,self.is_quiet)
         event_log.start()
         while True:
             time.sleep(self.event_interval)

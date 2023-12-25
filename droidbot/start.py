@@ -1,7 +1,7 @@
 # helper file of droidbot
 # it parses command arguments and send the options to droidbot
 import argparse
-from . import input_manager
+from input_manager import input_manager
 from . import input_policy
 from . import env_manager
 from .droidbot import DroidBot
@@ -168,6 +168,10 @@ def main():
             replay_output=opts.replay_output)
         droidbot.start()
     return
+
+
+
+
 
 
 if __name__ == "__main__":
