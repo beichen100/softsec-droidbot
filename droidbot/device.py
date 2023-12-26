@@ -110,12 +110,12 @@ class Device(object):
             adapter_name = adapter.__class__.__name__
             adapter_enabled = self.adapters[adapter]
             if not adapter_enabled:
-                print("[CONNECTION] %s is not enabled." % adapter_name)
+                self.logger.info("[CONNECTION] %s is not enabled." % adapter_name)
             else:
                 if adapter.check_connectivity():
-                    print("[CONNECTION] %s is enabled and connected." % adapter_name)
+                    self.logger.info("[CONNECTION] %s is enabled and connected." % adapter_name)
                 else:
-                    print("[CONNECTION] %s is enabled but not connected." % adapter_name)
+                    self.logger.info("[CONNECTION] %s is enabled but not connected." % adapter_name)
 
     def wait_for_device(self):
         """
@@ -631,7 +631,7 @@ class Device(object):
             install_cmd.append(app.app_path)
             install_p = subprocess.Popen(install_cmd, stdout=subprocess.PIPE)
             while self.connected and package_name not in self.adb.get_installed_apps():
-                print("Please wait while installing the app...")
+                self.logger.info("Please wait while installing the app...")
                 time.sleep(2)
             if not self.connected:
                 install_p.terminate()
@@ -730,7 +730,7 @@ class Device(object):
             uninstall_cmd = ["adb", "-s", self.serial, "uninstall", package_name]
             uninstall_p = subprocess.Popen(uninstall_cmd, stdout=subprocess.PIPE)
             while package_name in self.adb.get_installed_apps():
-                print("Please wait while uninstalling the app...")
+                self.logger.info("Please wait while uninstalling the app...")
                 time.sleep(2)
             uninstall_p.terminate()
 
@@ -838,7 +838,7 @@ class Device(object):
         except Exception as e:
             self.logger.warning("exception in get_current_state: %s" % e)
             import traceback
-            traceback.print_exc()
+            traceback.self.logger.info_exc()
         self.logger.debug("finish getting current device state...")
         self.last_know_state = current_state
         if not current_state:
@@ -926,5 +926,5 @@ class Device(object):
             self.minicap.connect()
 
         if self.minicap.check_connectivity():
-            print("[CONNECTION] %s is reconnected." % self.minicap.__class__.__name__)
+            self.logger.info("[CONNECTION] %s is reconnected." % self.minicap.__class__.__name__)
         self.pause_sending_event = False

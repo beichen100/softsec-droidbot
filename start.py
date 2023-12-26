@@ -96,7 +96,6 @@ def parse_args():
     parser.add_argument("-special_perm", action="store", dest="special_perm",
                         help="Grant the special permmision to the App, and APP has not other permmision.")
     options = parser.parse_args()
-    # print options
     return options
 
 

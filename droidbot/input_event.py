@@ -250,7 +250,7 @@ class EventLog(object):
         ## 添加隐私政策同意的场景
         if '同意' in self.event_str and self.is_quiet:
             
-            self.logger.info(f"找到了一处隐私政策同意的地方---{self.event_str}")
+            ## self.logger.info(f"找到了一处隐私政策同意的地方---{self.event_str}")
             # raise KeyboardInterrupt
             while(True):
                 time.sleep(1)
