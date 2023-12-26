@@ -95,6 +95,11 @@ def parse_args():
                         help="Run quietly the App.")
     parser.add_argument("-special_perm", action="store", dest="special_perm",
                         help="Grant the special permmision to the App, and APP has not other permmision.")
+    parser.add_argument("-run_background", action="store_true", dest="run_background",
+                        help="Run the App in run_background mode.")
+    parser.add_argument("-run_foreground", action="store_true", dest="run_foreground",
+                        help="Run the App in run_foreground mode.")
+    
     options = parser.parse_args()
     return options
 
@@ -173,7 +178,9 @@ def main():
             ignore_ad=opts.ignore_ad,
             replay_output=opts.replay_output,
             is_quiet=opts.is_quiet,
-            special_perm=opts.special_perm )
+            special_perm=opts.special_perm,
+            run_background=opts.run_background,
+            run_foreground=opts.run_foreground  )
         droidbot.start()
     return
 

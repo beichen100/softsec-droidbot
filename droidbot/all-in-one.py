@@ -34,7 +34,7 @@ def first_install(config):
         logger.info("Softsec-droidbot started in first_start mode.")
         
         # 测试结束任务函数
-        sleep(50)
+        sleep(70)
         stop_droidbot()
         
         droidbot_process.wait()  # 等待子进程结束
@@ -67,16 +67,76 @@ def quiet(config):
         logger.info("softsecdroidbot started in quiet mode.")
 
         # 测试结束任务函数
-        sleep(100)
+        sleep(150)
         stop_droidbot()
 
         
         droidbot_process.wait()  # 等待子进程结束
 
     except subprocess.CalledProcessError as e:
-        logger.error(f"Error starting DroidBot in quiet mode: {e}")
+        logger.error(f"Error starting softsecdroidbot in quiet mode: {e}")
     except KeyboardInterrupt:
-        logger.info("Ctrl+C detected. Stopping DroidBot.")
+        logger.info("Ctrl+C detected. Stopping softsecdroidbot.")
+        droidbot_process.terminate()  # 终止子进程
+        droidbot_process.wait()  # 等待子进程结束
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+
+
+
+def run_background(config):
+    app_path = config['app_path']
+    global droidbot_process
+ 
+    try:
+        if config["special_perm"]:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-run_background","-special_perm",config["special_perm"],"-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+        else:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-run_background","-is_quiet","-script","C:/Users/Administrator/Desktop/softsec-droidbot/script_samples/touch_agree.json"], stdout=subprocess.PIPE)
+
+        logger.info("softsecdroidbot started in run_background mode.")
+
+        # 测试结束任务函数
+        sleep(200)
+        stop_droidbot()
+
+        
+        droidbot_process.wait()  # 等待子进程结束
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error starting softsecdroidbot in run_background mode: {e}")
+    except KeyboardInterrupt:
+        logger.info("Ctrl+C detected. Stopping softsecdroidbot.")
+        droidbot_process.terminate()  # 终止子进程
+        droidbot_process.wait()  # 等待子进程结束
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+
+
+def run_foreground(config):
+    
+    app_path = config['app_path']
+
+    global droidbot_process
+    
+    try:
+        if config["special_perm"]:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-run_foreground","-special_perm",config["special_perm"],"-policy","none"], stdout=subprocess.PIPE)
+        else:
+            droidbot_process = subprocess.Popen(["softsecdroidbot", "-a",app_path,"-run_foreground","-policy","none"], stdout=subprocess.PIPE)
+
+        logger.info("softsecdroidbot started in run_foreground, mode.")
+        
+        # 测试结束任务函数
+        sleep(100)
+        stop_droidbot()
+        
+        droidbot_process.wait()  # 等待子进程结束
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error during run_foreground mode: {e}")
+    except KeyboardInterrupt:
+        logger.info("Ctrl+C detected. Stopping softsecdroidbot.")
         droidbot_process.terminate()  # 终止子进程
         droidbot_process.wait()  # 等待子进程结束
     except Exception as e:
@@ -88,42 +148,37 @@ def stop_droidbot():
 
     if droidbot_process is not None:
         try:
-            logger.info("DroidBot is ready to stop.")
+            logger.info("softsecdroidbot is ready to stop.")
             droidbot_process.send_signal(signal.CTRL_C_EVENT)  # 向子进程发送 Ctrl+C 信号，droidbot响应KeyboardInterrupt
             droidbot_process.wait()  # 等待子进程结束
-            logger.info("DroidBot stop finished.")
+            logger.info("softsecdroidbot stop finished.")
 
         except Exception as e:
-            return f"Error terminating DroidBot: {e}"
+            return f"Error terminating softsecdroidbot: {e}"
     else:
-        return "DroidBot process not found."
+        return "softsecdroidbot process not found."
 
 
 
 
-## config 包含：APK路径，mode模式(quiet,first_install)，special_perm授予特定权限
+## config 包含：APK路径，mode模式(quiet,first_install,run_background,run_foreground)，special_perm授予特定权限
 
 def main():
-
-
     # special_perm 参数说明：指定某权限，安装时自动授予
-
     config = {
         "app_path":r"C:/Users/Administrator/Desktop/YogaNow_1.4.10.apk",
-        "mode":"first_install",
+        "mode":"quiet",
         "special_perm":"android.permission.CAMERA"
-    }
-    
+    } 
     droidbot_process =None
-
-
-
-
     if config['mode'] == 'first_install':
         first_install(config)
     elif config['mode'] == 'quiet':
         quiet(config)
-
+    elif config['mode'] =='run_background':
+        run_background(config)
+    elif config['mode'] =='run_foreground':
+        run_foreground(config)
 
 
 

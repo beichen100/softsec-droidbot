@@ -167,7 +167,8 @@ class EventLog(object):
     save an event to local file system
     """
 
-    def __init__(self, device, app, event, profiling_method=None, is_quiet=False,tag=None):
+    def __init__(self, device, app, event, profiling_method=None, is_quiet=False,run_background=False,tag=None):
+        self.run_background=run_background
         self.is_quiet=is_quiet
         self.device = device
         self.app = app
@@ -250,8 +251,16 @@ class EventLog(object):
         ## 添加隐私政策同意的场景
         if '同意' in self.event_str and self.is_quiet:
             
-            ## self.logger.info(f"找到了一处隐私政策同意的地方---{self.event_str}")
+            self.logger.info(f"找到了一处隐私政策同意的地方---{self.event_str}")
             # raise KeyboardInterrupt
+            if self.run_background:
+                time.sleep(10)
+                self.device.go_background()
+                self.logger.info("APP已切换到后台.")
+                # self.device.go_foreground()
+                # self.device.go_background()
+
+
             while(True):
                 time.sleep(1)
             

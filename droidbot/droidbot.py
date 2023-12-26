@@ -46,7 +46,9 @@ class DroidBot(object):
                  ignore_ad=False,
                  replay_output=None,
                  is_quiet = False,
-                 special_perm=None):
+                 special_perm=None,
+                 run_background=False,
+                 run_foreground=False):
         """
         initiate droidbot with configurations
         :return:
@@ -86,6 +88,9 @@ class DroidBot(object):
         self.enabled = True
         self.is_quiet = is_quiet
         self.special_perm = special_perm
+        self.run_foreground= run_foreground
+        self.run_background= run_background
+
 
 
         try:
@@ -116,7 +121,9 @@ class DroidBot(object):
                 profiling_method=profiling_method,
                 master=master,
                 replay_output=replay_output,
-                is_quiet=self.is_quiet)
+                is_quiet=self.is_quiet,
+                run_foreground=self.run_foreground,
+                run_background=self.run_background)
         except Exception:
             import traceback
             traceback.print_exc()

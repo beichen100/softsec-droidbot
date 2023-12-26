@@ -30,7 +30,7 @@ class InputManager(object):
     def __init__(self, device, app, policy_name, random_input,
                  event_count, event_interval,
                  script_path=None, profiling_method=None, master=None,
-                 replay_output=None,is_quiet=False):
+                 replay_output=None,is_quiet=False,run_foreground=False,run_background=False):
         """
         manage input event sent to the target device
         :param device: instance of Device
@@ -54,6 +54,8 @@ class InputManager(object):
 
         self.monkey = None
         self.is_quiet=is_quiet
+        self.run_foreground=run_foreground
+        self.run_background=run_background
 
         if script_path is not None:
             f = open(script_path, 'r',encoding='utf-8')
@@ -101,7 +103,7 @@ class InputManager(object):
             return
         self.events.append(event)
 
-        event_log = EventLog(self.device, self.app, event, self.profiling_method,self.is_quiet)
+        event_log = EventLog(self.device, self.app, event, self.profiling_method,self.is_quiet,self.run_background)
         event_log.start()
         while True:
             time.sleep(self.event_interval)
@@ -123,8 +125,17 @@ class InputManager(object):
                 self.device.start_app(self.app)
                 if self.event_count == 0:
                     return
+                
+                # 添加 前台运行的场景，启动APP后无操作20s后先切到后台然后切到前台
+                if self.run_foreground:
+                    time.sleep(10)
+                    self.device.go_background()
+                    time.sleep(5)
+                    self.device.go_foreground()
+                    self.logger.info("APP已由后台切换到前台.")
                 while self.enabled:
                     time.sleep(1)
+
             elif self.policy_name == POLICY_MONKEY:
                 throttle = self.event_interval * 1000
                 monkey_cmd = "adb -s %s shell monkey %s --ignore-crashes --ignore-security-exceptions" \

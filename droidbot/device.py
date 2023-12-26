@@ -928,3 +928,12 @@ class Device(object):
         if self.minicap.check_connectivity():
             self.logger.info("[CONNECTION] %s is reconnected." % self.minicap.__class__.__name__)
         self.pause_sending_event = False
+
+
+    def go_background(self):
+        self.adb.shell("input keyevent KEYCODE_HOME")
+
+    def go_foreground(self):
+        self.adb.shell("input keyevent KEYCODE_APP_SWITCH")
+        time.sleep(5)
+        self.adb.shell("input keyevent KEYCODE_APP_SWITCH")
